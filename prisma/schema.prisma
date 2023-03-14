@@ -8,13 +8,13 @@ datasource db {
 }
 
 model Example {
-    id        String   @id @default(cuid())
+    id        String   @id @default(uuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
 
 model Account {
-    id                String  @id @default(cuid())
+    id                String  @id @default(uuid())
     userId            String
     type              String
     provider          String
@@ -32,7 +32,7 @@ model Account {
 }
 
 model Session {
-    id           String   @id @default(cuid())
+    id           String   @id @default(uuid())
     sessionToken String   @unique
     userId       String
     expires      DateTime
@@ -40,7 +40,8 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
+    id            String    @id @default(uuid())
+    role          UserRole  @default(VISITOR)
     name          String?
     email         String?   @unique
     emailVerified DateTime?
@@ -55,4 +56,38 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Tag {
+    id           String         @id @default(uuid())
+    name         String         @unique
+    createdAt    DateTime       @default(now())
+    updatedAt    DateTime       @updatedAt
+    ProjectsTags ProjectsTags[]
+}
+
+model Project {
+    id           String         @id @default(uuid())
+    title        String
+    description  String
+    image        String
+    dateFrom     DateTime
+    dateTo       DateTime?
+    createdAt    DateTime       @default(now())
+    updatedAt    DateTime       @updatedAt
+    ProjectsTags ProjectsTags[]
+}
+
+// join table
+model ProjectsTags {
+    id        String  @id @default(uuid())
+    Project   Project @relation(fields: [projectId], references: [id])
+    projectId String
+    Tag       Tag     @relation(fields: [tagId], references: [id])
+    tagId     String
+}
+
+enum UserRole {
+    VISITOR
+    ADMIN
 }

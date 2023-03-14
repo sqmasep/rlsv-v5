@@ -2,6 +2,8 @@ import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { trpc } from "@/utils/trpc";
+import theme from "@/lib/mui/theme";
+import { ThemeProvider } from "@mui/material";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -9,7 +11,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      <ThemeProvider theme={theme}>
+        <Component {...pageProps} />
+      </ThemeProvider>
     </SessionProvider>
   );
 };
